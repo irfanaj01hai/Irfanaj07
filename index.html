@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0e1a"><title>⚡ APKSTORE — Android Apps Download</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0b0e1a;color:#e8ecff;min-height:100vh;
+ background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(160,60,255,.14),transparent),
+ radial-gradient(ellipse 60% 40% at 85% 110%,rgba(124,194,79,.10),transparent)}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1020px;margin:0 auto;padding:16px}
+header{position:sticky;top:0;z-index:9;background:rgba(11,14,26,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.09)}
+.hrow{max-width:1020px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:900;letter-spacing:.5px;background:linear-gradient(90deg,#c77dff,#ffd76a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.hsearch{flex:1;min-width:160px;max-width:420px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:14px;outline:none;font-family:inherit}
+.hsearch:focus{border-color:#c77dff}
+.hbtn{padding:9px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#dbe4ff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.hero{margin:18px 0 6px;padding:22px;border-radius:20px;border:1px solid rgba(199,125,255,.3);
+ background:linear-gradient(120deg,rgba(199,125,255,.14),rgba(255,215,106,.07));display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.hero img,.hero .noicon{width:86px;height:86px;border-radius:20px;object-fit:cover;flex:0 0 auto}
+.noicon{display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,#3d2a66,#1c1436);border-radius:20px}
+.hero h2{font-size:24px;color:#fff}
+.hero .sub{color:#9fb0d8;font-size:13.5px;margin-top:3px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 6px}
+.chip{padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:700;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#c6d2f2;cursor:pointer}
+.chip.on{background:linear-gradient(135deg,#c77dff,#8f4dff);border-color:transparent;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px;margin-top:14px}
+.card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.card img,.card .noicon{width:64px;height:64px;border-radius:15px;object-fit:cover}
+.card .noicon{display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(135deg,#2c2150,#161030)}
+.card b{font-size:14.5px;color:#fff;line-height:1.3}
+.card .dev{font-size:11.5px;color:#8a96bb}
+.meta{font-size:11px;color:#6b7aa3}
+.badge{display:inline-block;font-size:10.5px;font-weight:900;padding:3px 9px;border-radius:999px;letter-spacing:.4px}
+.b-free{background:rgba(89,240,207,.15);color:#59f0cf;border:1px solid rgba(89,240,207,.4)}
+.b-paid{background:rgba(255,215,106,.14);color:#ffd76a;border:1px solid rgba(255,215,106,.4)}
+.b-feat{background:rgba(199,125,255,.16);color:#c77dff;border:1px solid rgba(199,125,255,.45)}
+.get{margin-top:auto;text-align:center;padding:9px;border-radius:11px;font-size:12.5px;font-weight:900;letter-spacing:.3px;
+ background:linear-gradient(135deg,#c77dff,#8f4dff);color:#fff}
+.get.free{background:linear-gradient(135deg,#2ecc71,#1a9e4f)}
+.bigbtn{display:inline-block;text-align:center;font-size:17px;font-weight:900;color:#fff;padding:15px 26px;border-radius:15px;
+ background:linear-gradient(135deg,#2ecc71,#1a9e4f);box-shadow:0 8px 24px rgba(46,204,113,.3);cursor:pointer;border:none;font-family:inherit}
+.bigbtn.paid{background:linear-gradient(135deg,#ffd76a,#e0a020);color:#241a00}
+footer{margin-top:40px;padding:18px;text-align:center;color:#6b7aa3;font-size:12px;line-height:1.8;border-top:1px solid rgba(255,255,255,.07)}
+.apppage{display:flex;gap:20px;flex-wrap:wrap;margin-top:18px}
+.apppage .icowrap img,.apppage .icowrap .noicon{width:110px;height:110px;border-radius:24px;object-fit:cover}
+.noicon.big{display:flex;align-items:center;justify-content:center;font-size:50px;background:linear-gradient(135deg,#3d2a66,#1c1436);width:110px;height:110px;border-radius:24px}
+.apppage h1{font-size:28px;color:#fff}
+.subline{color:#9fb0d8;font-size:14px;margin-top:5px}
+.tagrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);color:#c6d2f2}
+.panel{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px;margin-top:16px}
+.panel h3{color:#ffd76a;font-size:16px;margin-bottom:10px}
+.panel pre{white-space:pre-wrap;font-family:inherit;font-size:13.5px;color:#c6d2f2;line-height:1.65}
+.paybox{margin-top:14px;padding:16px;border-radius:16px;border:1px dashed rgba(255,215,106,.5);background:rgba(255,215,106,.06)}
+.upi{font-size:17px;font-weight:900;color:#ffd76a;letter-spacing:.5px}
+.coderr{margin-top:12px;padding:11px 14px;border-radius:12px;background:rgba(255,61,110,.14);border:1px solid rgba(255,61,110,.45);color:#ff8a95;font-size:13.5px}
+.codein{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.codein input{flex:1;min-width:150px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#fff;font-size:15px;letter-spacing:1px;text-transform:uppercase;outline:none;font-family:inherit}
+.codein input:focus{border-color:#ffd76a}
+.steps{counter-reset:st;margin-top:8px}
+.step{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed rgba(255,255,255,.08);font-size:13px;color:#c6d2f2;line-height:1.55}
+.step:last-child{border:none}
+.step::before{counter-increment:st;content:counter(st);flex:0 0 26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#c77dff,#8f4dff);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
+/* admin */
+.loginbox{max-width:380px;margin:60px auto;background:linear-gradient(160deg,#141a33,#0d1226);border:1px solid rgba(255,255,255,.13);border-radius:22px;padding:28px;text-align:center}
+.loginbox input{width:100%;padding:13px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font-size:15px;outline:none;margin:14px 0;text-align:center;font-family:inherit}
+.loginbox input:focus{border-color:#c77dff}
+.loginbox button{width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:900;color:#fff;background:linear-gradient(135deg,#c77dff,#8f4dff);cursor:pointer;font-family:inherit}
+.aform{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.aform{grid-template-columns:1fr}}
+.aform label{font-size:12px;color:#9fb0d8;font-weight:700;display:block;margin-bottom:5px}
+.aform input,.aform select,.aform textarea{width:100%;padding:11px 12px;border-radius:11px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;font-size:13.5px;outline:none;font-family:inherit}
+.aform textarea{resize:vertical;min-height:70px}
+.aform .full{grid-column:1/-1}
+.aform input[type=file]{padding:8px}
+.aform button{grid-column:1/-1;padding:14px;border:none;border-radius:13px;font-size:15px;font-weight:900;color:#fff;background:linear-gradient(135deg,#2ecc71,#1a9e4f);cursor:pointer;font-family:inherit}
+.approw{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:13px;border:1px solid rgba(255,255,255,.09);border-radius:16px;margin-top:10px;background:rgba(255,255,255,.03)}
+.approw img,.approw .noicon{width:48px;height:48px;border-radius:12px}
+.approw .noicon{display:flex;align-items:center;justify-content:center;font-size:22px;background:#2c2150}
+.approw .info{flex:1;min-width:180px}
+.approw .nm{font-weight:800;color:#fff;font-size:14.5px}
+.approw .st{font-size:11.5px;color:#8a96bb;margin-top:2px}
+.mini{padding:7px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#dbe4ff;font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit}
+.mini.warn{border-color:rgba(255,90,110,.4);color:#ff8a95}
+.mini.gold{border-color:rgba(255,215,106,.45);color:#ffd76a}
+.codes{font-family:monospace;font-size:12.5px;color:#59f0cf;letter-spacing:1px}
+.notice{margin-top:12px;padding:11px 14px;border-radius:12px;background:rgba(89,240,207,.1);border:1px solid rgba(89,240,207,.35);color:#8ff3cf;font-size:13px}
+.back{display:inline-block;margin-top:16px;color:#c77dff;font-size:13.5px;font-weight:700}
+</style></head><body>
+<header><div class="hrow">
+  <a href="/" class="logo">⚡ APKSTORE</a>
+  <input class="hsearch" id="q" placeholder="🔍 App dhoondo...">
+</div></header>
+<div class="wrap">
+  <div id="hero"></div>
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+  <div id="detail"></div>
+  <footer>⚡ APKSTORE • Naya app chahiye? Admin se contact karo! • Made with ❤️<br>
+  <span style="font-size:11px;color:#4a5578">⚠️ Har app apne risk par install karo — sirf bharosemand developer ki apps lo.</span></footer>
+</div>
+<script>
+var APPS = [
+ {
+  "id": "talwar1",
+  "name": "TALWAR.io",
+  "ver": "2.0",
+  "dev": "Arena Games",
+  "cat": "Games",
+  "price": 0,
+  "desc": "⚔️ Dholakpur Village Battle Royale!\n\n• 💰 LOOT RULE: jo maara, uski SAARI talwarein aapko!\n• 😈 THANOS (Main Villain) — 100 talwarein se start\n• 🌀 4 Black Holes — teleport karke bacho!\n• 🦸 15 Avengers fighters — Iron Man, Thor, Hulk...\n• 🔥 Power Tiers: 100+ talwar = 5-5 todna, 350+ = 20-20!\n• 🏆 Koi respawn nahi — aakhri bacha jeetega!\n\nBilkul FREE • Offline • Koi permission nahi!",
+  "featured": true,
+  "size": 209792,
+  "dl": 1,
+  "apk": "apk-talwar1.apk",
+  "icon": "icon-talwar1.png",
+  "codes": []
+ }
+];
+var UPI = "apna-upi@upi";
+var CATS = ['Sab','Games','Apps','Tools','Entertainment','Education','Social','Other'];
+var cat = 'Sab', q = '';
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function size(b){return b>=1048576?(b/1048576).toFixed(1)+' MB':(b>=1024?Math.round(b/1024)+' KB':b+' B');}
+function badge(a){return a.price>0?'<span class="badge b-paid">💰 ₹'+a.price+'</span>':'<span class="badge b-free">FREE</span>';}
+function icon(a,big){return a.icon?'<img class="'+(big?'big':'')+'" src="'+a.icon+'" alt="">':'<div class="noicon '+(big?'big':'')+'">📦</div>';}
+
+function renderHome(){
+  document.getElementById('detail').innerHTML=''; document.getElementById('hero').style.display='';
+  var feat = APPS.filter(function(a){return a.featured;})[0];
+  document.getElementById('hero').innerHTML = feat ? '<a class="hero" onclick="show(\''+feat.id+'\')">'+icon(feat,true)+
+    '<div style="flex:1;min-width:200px"><span class="badge b-feat">⭐ FEATURED APP</span>'+
+    '<h2 style="margin-top:6px">'+esc(feat.name)+' <span style="font-size:15px;color:#9fb0d8">v'+esc(feat.ver)+'</span></h2>'+
+    '<div class="sub">'+esc((feat.desc||'').split('\n')[0]).slice(0,90)+'</div>'+
+    '<div style="margin-top:8px">'+badge(feat)+'</div></div>'+
+    '<div class="get" style="padding:13px 22px">'+(feat.price>0?'💰 ₹'+feat.price:'⬇️ DOWNLOAD KARO')+'</div></a>' : '';
+  var cats = CATS.filter(function(c){return c==='Sab'||APPS.some(function(a){return a.cat===c;});});
+  document.getElementById('chips').innerHTML = cats.map(function(c){
+    return '<div class="chip '+(c===cat?'on':'')+'" data-c="'+c+'">'+c+'</div>';}).join('');
+  document.querySelectorAll('#chips .chip').forEach(function(ch){ch.onclick=function(){
+    cat=ch.dataset.c; renderHome();};});
+  document.getElementById('grid').innerHTML = APPS.map(function(a){
+    return '<div class="card" onclick="show(\''+a.id+'\')" data-cat="'+a.cat+'" data-nm="'+esc(a.name.toLowerCase()+' '+a.dev.toLowerCase())+'">'+
+      icon(a)+'<b>'+esc(a.name)+(a.featured?' <span class="badge b-feat">★</span>':'')+'</b>'+
+      '<div class="dev">'+esc(a.dev)+'</div>'+
+      '<div class="meta">v'+esc(a.ver)+' • '+size(a.size)+'</div>'+badge(a)+
+      '<div class="get '+(a.price>0?'':'free')+'">'+(a.price>0?'💰 ₹'+a.price:'⬇️ FREE')+'</div></div>';}).join('');
+  fl();
+}
+function fl(){var t=q.toLowerCase();
+  document.querySelectorAll('#grid .card').forEach(function(c){
+    var okc=cat==='Sab'||c.dataset.cat===cat, okq=!t||c.dataset.nm.indexOf(t)>-1;
+    c.style.display=(okc&&okq)?'':'none';});}
+document.getElementById('q').addEventListener('input',function(e){q=e.target.value;fl();});
+
+function show(id){
+  var a = APPS.find(function(x){return x.id===id;}); if(!a) return;
+  window.scrollTo(0,0);
+  document.getElementById('hero').style.display='none';
+  document.getElementById('grid').innerHTML='';
+  var pay;
+  if(a.price>0){
+    pay = '<div class="panel"><h3>💰 Yeh PAID app hai — ₹'+a.price+'</h3><div class="paybox">'+
+      '<div style="font-size:13px;color:#c6d2f2">Payment karo is UPI par (screenshot bhejo admin ko):</div>'+
+      '<div class="upi">'+esc(UPI)+'</div>'+
+      '<button class="mini gold" style="margin-top:10px" onclick="cu()">📋 UPI copy karo</button>'+
+      '<div style="font-size:12.5px;color:#9fb0d8;margin-top:12px;line-height:1.6">Payment ke baad admin se <b>UNLOCK CODE</b> lo, neeche daalo:</div>'+
+      '<form class="codein" onsubmit="return unlock(\''+a.id+'\',this.c.value);">'+
+      '<input name="c" placeholder="UNLOCK CODE" maxlength="12" required>'+
+      '<button class="bigbtn paid" style="padding:12px 20px;font-size:14px" type="submit">🔓 UNLOCK</button></form>'+
+      '<div id="cerr"></div></div></div>';
+  } else {
+    pay = '<div class="panel" style="text-align:center"><a class="bigbtn" href="'+a.apk+'" download onclick="dlup(\''+a.id+'\')">⬇️ FREE DOWNLOAD ('+size(a.size)+')</a></div>';
+  }
+  document.getElementById('detail').innerHTML =
+    '<a class="back" onclick="renderHome()">← Store par wapas</a>'+
+    '<div class="apppage"><div class="icowrap">'+icon(a,true)+'</div>'+
+    '<div style="flex:1;min-width:230px"><h1>'+esc(a.name)+(a.featured?' <span class="badge b-feat">★</span>':'')+'</h1>'+
+    '<div class="subline">'+esc(a.dev)+' • v'+esc(a.ver)+'</div>'+
+    '<div class="tagrow">'+badge(a)+' <span class="tag">📦 '+size(a.size)+'</span><span class="tag">🏷 '+esc(a.cat)+'</span></div></div></div>'+
+    pay+
+    '<div class="panel"><h3>📋 App ki jankari</h3><pre>'+esc(a.desc||'Koi description nahi.')+'</pre></div>'+
+    '<div class="panel"><h3>📲 Install kaise karein</h3><div class="steps">'+
+    '<div class="step"><div>Upar se APK download karo</div></div>'+
+    '<div class="step"><div>File kholo — <b>Install unknown apps</b> poochhe to <b>Allow</b> karo</div></div>'+
+    '<div class="step"><div><b>Install</b> dabao — ho gaya! 🎉</div></div></div></div>';
+}
+function unlock(id, code){
+  var a = APPS.find(function(x){return x.id===id;});
+  crypto.subtle.digest('SHA-256', new TextEncoder().encode(code.trim().toUpperCase())).then(function(h){
+    var hex = Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+    if(a.codes.indexOf(hex)>-1){
+      try{var u=JSON.parse(localStorage.getItem('used_'+id)||'[]');u.push(hex);localStorage.setItem('used_'+id,JSON.stringify(u));}catch(e){}
+      dlup(id); location.href=a.apk;
+    } else {
+      document.getElementById('cerr').innerHTML='<div class="coderr">❌ Galat code! Admin se sahi UNLOCK CODE lo.</div>';
+    }
+  });
+  return false;
+}
+function dlup(id){try{var d=JSON.parse(localStorage.getItem('dls')||'{}');d[id]=(d[id]||0)+1;localStorage.setItem('dls',JSON.stringify(d));}catch(e){}}
+function cu(){if(navigator.clipboard)navigator.clipboard.writeText(UPI).then(function(){alert('UPI copy ho gaya! 😄');});else alert(UPI);}
+renderHome();
+</script></body></html>
