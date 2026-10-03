@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IRON HORIZON — Tactical Archery &amp; Assault</title>
+<style>
+  :root{
+    --accent:#7fe3ff; --accent2:#ffb454; --danger:#ff5a5a; --ok:#9dff7f;
+    --panel:rgba(8,14,20,.55); --panel2:rgba(8,14,20,.78);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-user-select:none}
+  html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#dfe9f2}
+  #view{position:fixed;inset:0;width:100%;height:100%;display:block;filter:saturate(1.07) contrast(1.05)}
+  canvas{outline:none}
+
+  /* ---------- cinematic chrome ---------- */
+  #vignette{position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,.42) 100%)}
+  #dmgFlash{position:fixed;inset:0;pointer-events:none;z-index:6;opacity:0;
+    background:radial-gradient(ellipse at center, rgba(255,0,0,0) 38%, rgba(200,10,10,.55) 100%);
+    transition:opacity .12s linear}
+  .lbar{position:fixed;left:0;right:0;height:0;background:#000;z-index:7;transition:height .6s ease}
+  #lbarT{top:0}#lbarB{bottom:0}
+  body.cine .lbar{height:5.5vh}
+
+  /* ---------- HUD ---------- */
+  #hud{position:fixed;inset:0;pointer-events:none;z-index:10;display:none}
+  .panel{background:var(--panel);border:1px solid rgba(127,227,255,.16);border-radius:8px;
+    backdrop-filter:blur(3px)}
+
+  /* objectives — top left */
+  #objectives{position:absolute;top:18px;left:18px;padding:10px 14px;min-width:250px;max-width:330px}
+  #objectives h3{font-size:10px;letter-spacing:2.5px;color:var(--accent);opacity:.9;margin-bottom:6px}
+  #objTitle{font-size:14px;font-weight:600;margin-bottom:4px;color:#fff}
+  #objText{font-size:12px;opacity:.85;line-height:1.45}
+  #objProg{margin-top:6px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+  #objProgF{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#fff);transition:width .3s}
+
+  /* compass — top center */
+  #compass{position:absolute;top:14px;left:50%;transform:translateX(-50%)}
+  #compassCv{display:block}
+
+  /* minimap — top right */
+  #minimapWrap{position:absolute;top:18px;right:18px;padding:6px}
+  #minimap{display:block;border-radius:6px}
+  #mapLabel{font-size:9px;letter-spacing:2px;text-align:center;opacity:.65;margin-top:4px}
+
+  /* wind + clock — under minimap */
+  #envStrip{position:absolute;top:222px;right:18px;width:182px;padding:7px 10px;font-size:11px;
+    display:flex;justify-content:space-between;align-items:center;gap:6px}
+  #windArrow{display:inline-block;color:var(--accent);font-size:14px;transition:transform .4s}
+  #weatherName{color:var(--accent2);letter-spacing:1px;font-size:10px}
+
+  /* vitals — bottom left */
+  #vitals{position:absolute;left:18px;bottom:20px;width:270px;padding:12px 14px}
+  .barRow{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+  .barRow:last-child{margin-bottom:0}
+  .barIco{width:15px;text-align:center;font-size:12px;opacity:.9}
+  .barShell{flex:1;height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
+  .barF{height:100%;width:100%;border-radius:4px;transition:width .18s}
+  #hpF{background:linear-gradient(90deg,#ff4d4d,#ff9d5c)}
+  #arF{background:linear-gradient(90deg,#4d9fff,#7fe3ff)}
+  #stF{background:linear-gradient(90deg,#b8ff5c,#5cff9d)}
+  .barVal{width:34px;font-size:11px;text-align:right;opacity:.9;font-variant-numeric:tabular-nums}
+
+  /* weapon / ammo — bottom right */
+  #weaponPanel{position:absolute;right:18px;bottom:20px;padding:12px 16px;text-align:right;min-width:230px}
+  #wpnName{font-size:13px;font-weight:600;letter-spacing:1.5px;color:#fff}
+  #wpnType{font-size:9px;letter-spacing:2.5px;color:var(--accent);margin-bottom:6px}
+  #ammoRow{display:flex;justify-content:flex-end;align-items:baseline;gap:6px}
+  #ammoBig{font-size:34px;font-weight:700;color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+  #ammoRes{font-size:14px;opacity:.6;font-variant-numeric:tabular-nums}
+  #ammoHint{font-size:10px;opacity:.55;margin-top:4px;letter-spacing:.5px}
+
+  /* score / info — bottom center-left cluster */
+  #scorePanel{position:absolute;left:18px;bottom:118px;padding:7px 14px;font-size:12px;display:flex;gap:16px}
+  #scorePanel b{color:var(--accent2);font-variant-numeric:tabular-nums}
+  #fpsBox{position:absolute;right:18px;bottom:118px;padding:5px 12px;font-size:10px;letter-spacing:1px;opacity:.75}
+
+  /* crosshair */
+  #crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:0;height:0}
+  .ch{position:absolute;background:#eaf6ff;box-shadow:0 0 3px rgba(0,0,0,.9);border-radius:1px}
+  #chDot{width:3px;height:3px;left:-1.5px;top:-1.5px;border-radius:50%}
+  #chT,#chB{width:2px;height:9px;left:-1px}
+  #chL,#chR{height:2px;width:9px;top:-1px}
+
+  /* hitmarker */
+  #hitmark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(45deg);opacity:0;width:26px;height:26px}
+  #hitmark i{position:absolute;background:#fff;box-shadow:0 0 4px #000}
+  #hitmark.hs i{background:var(--danger)}
+  #hitmark .h1{left:12px;top:0;width:2px;height:8px}
+  #hitmark .h2{left:12px;bottom:0;width:2px;height:8px}
+  #hitmark .h3{top:12px;left:0;height:2px;width:8px}
+  #hitmark .h4{top:12px;right:0;height:2px;width:8px}
+
+  /* banners + feed */
+  #banner{position:absolute;top:20%;left:50%;transform:translateX(-50%);text-align:center;opacity:0;
+    transition:opacity .5s;pointer-events:none}
+  #bannerTitle{font-size:26px;font-weight:700;letter-spacing:6px;color:#fff;text-shadow:0 0 18px rgba(127,227,255,.8)}
+  #bannerSub{font-size:13px;letter-spacing:3px;color:var(--accent);margin-top:6px}
+  #killfeed{position:absolute;right:18px;top:300px;text-align:right;font-size:11.5px;line-height:1.9}
+  .kf{opacity:.9;text-shadow:0 1px 3px #000}
+  .kf b{color:var(--accent2)}
+
+  #interactHint{position:absolute;left:50%;top:58%;transform:translateX(-50%);font-size:12px;
+    letter-spacing:2px;color:var(--ok);opacity:0;transition:opacity .2s;text-shadow:0 1px 3px #000}
+
+  /* ---------- touch controls ---------- */
+  #touchUI{display:none;position:fixed;inset:0;z-index:15;pointer-events:none}
+  body.touch #touchUI{display:block}
+  body.touch{touch-action:none}
+  #stickBase{position:absolute;width:120px;height:120px;border-radius:50%;display:none;
+    background:rgba(127,227,255,.08);border:2px solid rgba(127,227,255,.3)}
+  #stickKnob{position:absolute;left:38px;top:38px;width:44px;height:44px;border-radius:50%;
+    background:rgba(127,227,255,.45);border:1px solid rgba(255,255,255,.5)}
+  .tbtn{position:absolute;pointer-events:auto;display:flex;align-items:center;justify-content:center;
+    border-radius:50%;background:rgba(10,20,28,.5);border:1.5px solid rgba(127,227,255,.4);
+    color:#dfe9f2;font-size:11px;letter-spacing:1px;font-weight:700;user-select:none;touch-action:none}
+  .tbtn.on{background:rgba(127,227,255,.35);border-color:#fff}
+  #btnFire{width:92px;height:92px;right:26px;bottom:30px;font-size:14px;border-color:rgba(255,120,90,.6)}
+  #btnAim{width:62px;height:62px;right:130px;bottom:34px}
+  #btnJump{width:58px;height:58px;right:44px;bottom:136px}
+  #btnSprint{width:58px;height:58px;left:28px;bottom:112px;border-radius:12px}
+  #btnSwap{width:58px;height:58px;right:130px;bottom:112px}
+  #btnReload{width:52px;height:52px;right:210px;bottom:38px;border-radius:12px}
+  #btnCam{width:46px;height:46px;right:214px;bottom:104px;border-radius:12px;font-size:9px}
+  #btnPauseT{width:42px;height:42px;left:16px;top:16px;border-radius:10px;font-size:15px;position:absolute}
+  @media (max-width:920px),(max-height:520px){
+    #minimapWrap{transform:scale(.7);transform-origin:top right}
+    #envStrip{transform:scale(.85);transform-origin:top right;top:196px}
+    #objectives{transform:scale(.85);transform-origin:top left}
+    #vitals{transform:scale(.85);transform-origin:bottom left}
+    #weaponPanel{transform:scale(.85);transform-origin:bottom right}
+    #scorePanel,#fpsBox{transform:scale(.85)}
+    .titleWord{font-size:36px;letter-spacing:8px}
+    .ctlGrid{display:none}
+  }
+
+  /* ---------- overlays / menus ---------- */
+  .overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at center, rgba(4,10,16,.82), rgba(0,0,0,.94));backdrop-filter:blur(4px)}
+  .card{max-width:760px;width:92%;text-align:center;padding:36px 40px}
+  .titleWord{font-size:54px;font-weight:800;letter-spacing:14px;color:#fff;line-height:1;
+    text-shadow:0 0 30px rgba(127,227,255,.5)}
+  .titleSub{font-size:13px;letter-spacing:7px;color:var(--accent);margin-top:10px}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(127,227,255,.5),transparent);margin:24px 0}
+  .ctlGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 26px;text-align:left;font-size:12.5px;
+    opacity:.92;margin:0 auto;max-width:560px}
+  .ctlGrid div{padding:3px 0}
+  .ctlGrid b{color:var(--accent);display:inline-block;min-width:96px;font-weight:600}
+  .bigBtn{pointer-events:auto;cursor:pointer;margin-top:26px;padding:14px 54px;font-size:15px;letter-spacing:5px;
+    color:#02141c;background:linear-gradient(180deg,#9feaff,#4fc3e8);border:none;border-radius:4px;font-weight:700}
+  .bigBtn:hover{filter:brightness(1.12)}
+  .smallBtn{pointer-events:auto;cursor:block;cursor:pointer;margin:6px;padding:10px 26px;font-size:12px;
+    letter-spacing:3px;color:#dfe9f2;background:rgba(127,227,255,.1);border:1px solid rgba(127,227,255,.35);
+    border-radius:4px}
+  .smallBtn:hover{background:rgba(127,227,255,.22)}
+  .menuNote{margin-top:18px;font-size:11px;opacity:.55;letter-spacing:1px}
+  .hidden{display:none!important}
+
+  /* loadout */
+  #loadout .card{max-width:900px}
+  .loadGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;text-align:left}
+  .loadCol h4{font-size:10px;letter-spacing:3px;color:var(--accent);margin-bottom:8px;text-align:center}
+  .itemCard{pointer-events:auto;cursor:pointer;border:1px solid rgba(255,255,255,.14);border-radius:6px;
+    padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,.04);position:relative}
+  .itemCard:hover{background:rgba(127,227,255,.1)}
+  .itemCard.eq{border-color:var(--ok);background:rgba(157,255,127,.08)}
+  .itemCard.lk{opacity:.55;cursor:not-allowed}
+  .itemCard .nm{font-size:13px;font-weight:600}
+  .itemCard .st{font-size:10.5px;opacity:.75;margin-top:3px;line-height:1.4}
+  .itemCard .lk2{position:absolute;top:8px;right:10px;font-size:10px;color:var(--accent2)}
+  .eqTag{position:absolute;top:8px;right:10px;font-size:9px;color:var(--ok);letter-spacing:2px}
+
+  /* pause */
+  #pause .card{max-width:520px}
+  .setRow{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:12.5px;
+    padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+  .setRow input[type=range]{width:160px;accent-color:var(--accent)}
+  .setRow select{background:#0b1620;color:#dfe9f2;border:1px solid rgba(127,227,255,.3);border-radius:4px;padding:3px 8px}
+
+  #deathScreen .titleWord{color:#ff6b6b;text-shadow:0 0 30px rgba(255,80,80,.6);letter-spacing:10px}
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+
+<div id="vignette"></div>
+<div id="dmgFlash"></div>
+<div class="lbar" id="lbarT"></div>
+<div class="lbar" id="lbarB"></div>
+
+<!-- ===================== HUD ===================== -->
+<div id="hud">
+  <div id="objectives" class="panel">
+    <h3>MISSION OBJECTIVES</h3>
+    <div id="objTitle">—</div>
+    <div id="objText">—</div>
+    <div id="objProg"><div id="objProgF"></div></div>
+  </div>
+
+  <div id="compass"><canvas id="compassCv" width="360" height="30"></canvas></div>
+
+  <div id="minimapWrap" class="panel">
+    <canvas id="minimap" width="170" height="170"></canvas>
+    <div id="mapLabel">TAC-MAP // SECTOR 7</div>
+  </div>
+
+  <div id="envStrip" class="panel">
+    <span><span id="windArrow">➤</span> <span id="windSpd">0</span> m/s</span>
+    <span id="clock">08:00</span>
+    <span id="weatherName">CLEAR</span>
+  </div>
+
+  <div id="vitals" class="panel">
+    <div class="barRow"><span class="barIco">✚</span><div class="barShell"><div class="barF" id="hpF"></div></div><span class="barVal" id="hpV">100</span></div>
+    <div class="barRow"><span class="barIco">⛨</span><div class="barShell"><div class="barF" id="arF"></div></div><span class="barVal" id="arV">0</span></div>
+    <div class="barRow"><span class="barIco">⚡</span><div class="barShell"><div class="barF" id="stF"></div></div><span class="barVal" id="stV">100</span></div>
+  </div>
+
+  <div id="scorePanel" class="panel">
+    <span>SCORE <b id="scoreV">0</b></span>
+    <span>KILLS <b id="killsV">0</b></span>
+    <span>ACC <b id="accV">—</b></span>
+  </div>
+  <div id="fpsBox" class="panel"><span id="fpsV">60</span> FPS · <span id="qualV">HIGH</span></div>
+
+  <div id="weaponPanel" class="panel">
+    <div id="wpnName">AR-7 VANDAL</div>
+    <div id="wpnType">ASSAULT RIFLE</div>
+    <div id="ammoRow"><span id="ammoBig">30</span><span id="ammoRes">/ 120</span></div>
+    <div id="ammoHint">R RELOAD · Q / WHEEL SWITCH · U LOADOUT</div>
+  </div>
+
+  <div id="crosshair">
+    <div class="ch" id="chDot"></div>
+    <div class="ch" id="chT"></div><div class="ch" id="chB"></div>
+    <div class="ch" id="chL"></div><div class="ch" id="chR"></div>
+  </div>
+  <div id="hitmark"><i class="h1"></i><i class="h2"></i><i class="h3"></i><i class="h4"></i></div>
+
+  <div id="banner"><div id="bannerTitle"></div><div id="bannerSub"></div></div>
+  <div id="killfeed"></div>
+  <div id="interactHint"></div>
+</div>
+
+<!-- touch controls -->
+<div id="touchUI">
+  <div id="stickBase"><div id="stickKnob"></div></div>
+  <div class="tbtn" id="btnFire">FIRE</div>
+  <div class="tbtn" id="btnAim">AIM</div>
+  <div class="tbtn" id="btnJump">JUMP</div>
+  <div class="tbtn" id="btnSprint">RUN</div>
+  <div class="tbtn" id="btnSwap">⇄</div>
+  <div class="tbtn" id="btnReload">RLD</div>
+  <div class="tbtn" id="btnCam">CAM</div>
+  <div class="tbtn" id="btnPauseT">⏸</div>
+</div>
+
+<!-- ===================== START ===================== -->
+<div class="overlay" id="startScreen">
+  <div class="card">
+    <div class="titleWord">IRON HORIZON</div>
+    <div class="titleSub">TACTICAL ARCHERY &amp; ASSAULT — OPEN WORLD</div>
+    <div class="divider"></div>
+    <div class="ctlGrid">
+      <div><b>W A S D</b> Move</div>            <div><b>MOUSE</b> Aim / Fire (LMB)</div>
+      <div><b>SHIFT</b> Sprint</div>            <div><b>SPACE</b> Jump</div>
+      <div><b>RMB</b> Aim down sights</div>     <div><b>1 / 2 / Q</b> Switch weapon</div>
+      <div><b>R</b> Reload</div>                <div><b>V</b> First / third person</div>
+      <div><b>U</b> Loadout &amp; unlocks</div> <div><b>F</b> Cycle weather</div>
+      <div><b>T</b> Skip time (+2h)</div>       <div><b>ESC</b> Pause / settings</div>
+    </div>
+    <div class="divider"></div>
+    <div style="font-size:12px;opacity:.75;line-height:1.7">
+      Clear the abandoned outpost, demolish fuel caches, hunt recon drones and hold the line<br>
+      against assault waves. Bow shots obey gravity &amp; wind — watch the wind indicator.
+    </div>
+    <button class="bigBtn" id="btnStart">DEPLOY</button>
+    <div class="menuNote" id="lockNote">CLICK DEPLOY TO CAPTURE MOUSE · HEADPHONES RECOMMENDED</div>
+  </div>
+</div>
+
+<!-- ===================== PAUSE ===================== -->
+<div class="overlay hidden" id="pause">
+  <div class="card">
+    <div class="titleWord" style="font-size:30px;letter-spacing:8px">PAUSED</div>
+    <div class="divider"></div>
+    <div style="text-align:left;max-width:380px;margin:0 auto">
+      <div class="setRow"><span>Mouse sensitivity</span><input type="range" id="setSens" min="0.4" max="2.4" step="0.1" value="1"></div>
+      <div class="setRow"><span>Volume</span><input type="range" id="setVol" min="0" max="1" step="0.05" value="0.7"></div>
+      <div class="setRow"><span>Graphics quality</span>
+        <select id="setQual"><option value="high">HIGH</option><option value="low">PERFORMANCE</option></select></div>
+      <div class="setRow"><span>Day cycle speed</span>
+        <select id="setTime"><option value="0.5">SLOW</option><option value="1" selected>NORMAL</option><option value="2.5">FAST</option></select></div>
+    </div>
+    <div style="margin-top:20px">
+      <button class="smallBtn" id="btnResume">RESUME</button>
+      <button class="smallBtn" id="btnRestart">RESTART MISSION</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== LOADOUT ===================== -->
+<div class="overlay hidden" id="loadout">
+  <div class="card">
+    <div class="titleWord" style="font-size:26px;letter-spacing:8px">ARMORY — LOADOUT</div>
+    <div class="titleSub">EARN SCORE TO UNLOCK NEW EQUIPMENT</div>
+    <div class="divider"></div>
+    <div class="loadGrid">
+      <div class="loadCol"><h4>BOWS</h4><div id="loadBows"></div></div>
+      <div class="loadCol"><h4>ARROWS</h4><div id="loadArrows"></div></div>
+      <div class="loadCol"><h4>RIFLES</h4><div id="loadRifles"></div></div>
+    </div>
+    <button class="smallBtn" id="btnCloseLoad" style="margin-top:18px">CLOSE (U)</button>
+  </div>
+</div>
+
+<!-- ===================== DEATH ===================== -->
+<div class="overlay hidden" id="deathScreen">
+  <div class="card">
+    <div class="titleWord">K.I.A.</div>
+    <div class="titleSub" style="color:#ff8a8a">YOU WERE TAKEN DOWN</div>
+    <div class="divider"></div>
+    <div id="deathStats" style="font-size:13px;opacity:.85;line-height:2"></div>
+    <button class="bigBtn" id="btnRespawn" style="background:linear-gradient(180deg,#ff9d9d,#e85c5c)">RESPAWN</button>
+  </div>
+</div>
+
+<script src="three.min.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
